@@ -1,5 +1,5 @@
 // src/inventory/inventory.controller.ts
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, Query } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
@@ -31,5 +31,15 @@ export class InventoryController {
   @Get(':productName')
   findByProductName(@Param('productName') productName: string) {
     return this.inventoryService.findByProductName(productName);
+  }
+
+  @Get()
+  async getRealizedPL(
+      @Query('productName') productName: string,
+      @Query('sellPrice') price: number,
+      @Query('sellAmount') amount: number
+  ): Promise<{ realizedPL: number }> {
+      const realizedPL = await this.inventoryService.calculateRealizedPL(productName, price, amount);
+      return { realizedPL };
   }
 }
